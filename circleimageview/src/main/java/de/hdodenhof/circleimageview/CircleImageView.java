@@ -31,6 +31,7 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.ColorInt;
@@ -68,6 +69,7 @@ public class CircleImageView extends ImageView {
     private int mCircleBackgroundColor = DEFAULT_CIRCLE_BACKGROUND_COLOR;
 
     private Bitmap mBitmap;
+    private Canvas mBitmapCanvas;
     private BitmapShader mBitmapShader;
     private int mBitmapWidth;
     private int mBitmapHeight;
@@ -157,6 +159,11 @@ public class CircleImageView extends ImageView {
 
         if (mBitmap == null) {
             return;
+        }
+
+        if (mBitmapCanvas != null) {
+            getDrawable().setBounds(0, 0, mBitmapCanvas.getWidth(), mBitmapCanvas.getHeight());
+            getDrawable().draw(mBitmapCanvas);
         }
 
         if (mCircleBackgroundColor != Color.TRANSPARENT) {
@@ -384,6 +391,11 @@ public class CircleImageView extends ImageView {
         } else {
             mBitmap = getBitmapFromDrawable(getDrawable());
         }
+
+        if (getDrawable() instanceof TransitionDrawable && mBitmap.isMutable()) {
+            mBitmapCanvas = new Canvas(mBitmap);
+        }
+
         setup();
     }
 
